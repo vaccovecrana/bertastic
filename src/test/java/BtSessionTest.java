@@ -30,6 +30,7 @@ public class BtSessionTest {
           var vec0 = bert.embedSequence(st0);
           var vec1 = bert.embedSequence(st0);
           var vec2 = bert.embedSequences(strings);
+
           System.out.printf("%s -> %s%n", st0, Arrays.toString(vec0));
           System.out.printf("%s -> %s%n", st0, Arrays.toString(vec1));
 
