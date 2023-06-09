@@ -11,7 +11,7 @@ configure<io.vacco.oss.gitflow.GsPluginProfileExtension> {
 val api by configurations
 
 dependencies {
-  implementation("org.tensorflow:tensorflow-core-platform:0.4.1")
+  api("org.tensorflow:tensorflow-core-platform:0.4.1")
   testImplementation("com.robrua.nlp.models:easy-bert-uncased-L-12-H-768-A-12:1.0.0")
   testImplementation("com.google.code.gson:gson:2.10.1")
 }

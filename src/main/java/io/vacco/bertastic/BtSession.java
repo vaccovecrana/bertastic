@@ -28,7 +28,8 @@ public class BtSession implements AutoCloseable {
 
   /**
    * Loads a pre-trained BERT model from a TensorFlow saved model saved by the easy-bert Python utilities
-   *
+   * @param ms model file sources.
+   * @param ji JSON input function (can be used with Gson or Jackson).
    * @return a ready-to-use BERT model
    */
   public static BtSession load(BtModelSource ms, BtJsonInput ji) {
