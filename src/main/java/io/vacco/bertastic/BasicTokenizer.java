@@ -12,9 +12,7 @@ import java.util.stream.Stream;
  * {@link WordpieceTokenizer} to further segment them into the BERT tokens that are used for input into the model.
  *
  * @author Rob Rua (https://github.com/robrua)
- * @version 1.0.3
  * @see <a href="https://github.com/google-research/bert/blob/master/tokenization.py">The Python tokenization code this is ported from</a>
- * @since 1.0.3
  */
 public class BasicTokenizer extends Tokenizer {
 
@@ -118,7 +116,7 @@ public class BasicTokenizer extends Tokenizer {
    * Creates a BERT {@link BasicTokenizer}
    *
    * @param doLowerCase whether to convert sequences to lower case during tokenization
-   * @since 1.0.3
+   * 
    */
   public BasicTokenizer(final boolean doLowerCase) {
     this.doLowerCase = doLowerCase;

@@ -16,9 +16,7 @@ import java.util.stream.Stream;
  * {@link WordpieceTokenizer}
  *
  * @author Rob Rua (https://github.com/robrua)
- * @version 1.0.3
  * @see <a href="https://github.com/google-research/bert/blob/master/tokenization.py">The Python tokenization code this is ported from</a>
- * @since 1.0.3
  */
 public class FullTokenizer extends Tokenizer {
 
@@ -36,7 +34,7 @@ public class FullTokenizer extends Tokenizer {
       while ((line = reader.readLine()) != null) {
         vocabulary.put(line.trim(), index++);
       }
-    } catch (final IOException e) {
+    } catch (IOException e) {
       throw new RuntimeException("Unable to read vocabulary from " + in.getAbsolutePath(), e);
     }
     return vocabulary;
@@ -46,7 +44,6 @@ public class FullTokenizer extends Tokenizer {
    * Creates a BERT {@link FullTokenizer}
    *
    * @param vocabulary BERT vocabulary file to use for tokenization
-   * @since 1.0.3
    */
   public FullTokenizer(File vocabulary) {
     this(vocabulary, DEFAULT_DO_LOWER_CASE);
@@ -57,7 +54,6 @@ public class FullTokenizer extends Tokenizer {
    *
    * @param vocabulary BERT vocabulary file to use for tokenization
    * @param doLowerCase whether to convert sequences to lower case during tokenization
-   * @since 1.0.3
    */
   public FullTokenizer(File vocabulary, boolean doLowerCase) {
     this.vocabulary = loadVocabulary(vocabulary);
@@ -70,21 +66,20 @@ public class FullTokenizer extends Tokenizer {
    *
    * @param tokens the tokens to convert
    * @return the inputIds for the tokens
-   * @since 1.0.3
    */
-  public int[] convert(final String[] tokens) {
+  public int[] convert(String[] tokens) {
     return Arrays.stream(tokens).mapToInt(vocabulary::get).toArray();
   }
 
   @Override
-  public String[] tokenize(final String sequence) {
+  public String[] tokenize(String sequence) {
     return Arrays.stream(wordpiece.tokenize(basic.tokenize(sequence)))
         .flatMap(Stream::of)
         .toArray(String[]::new);
   }
 
   @Override
-  public String[][] tokenize(final String ... sequences) {
+  public String[][] tokenize(String ... sequences) {
     return Arrays.stream(basic.tokenize(sequences))
         .map((var tokens) -> Arrays.stream(wordpiece.tokenize(tokens))
             .flatMap(Stream::of)

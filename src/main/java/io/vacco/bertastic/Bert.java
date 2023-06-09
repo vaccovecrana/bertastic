@@ -29,7 +29,6 @@ public class Bert implements AutoCloseable {
    * Loads a pre-trained BERT model from a TensorFlow saved model saved by the easy-bert Python utilities
    *
    * @return a ready-to-use BERT model
-   * @since 1.0.3
    */
   public static Bert load(ModelBundle mb, JsonInput ji) {
     try {
@@ -61,7 +60,6 @@ public class Bert implements AutoCloseable {
    *
    * @param sequences the sequences to embed
    * @return the pooled embeddings for the sequences, in the order the input {@link java.lang.Iterable} provided them
-   * @since 1.0.3
    */
   public float[][] embedSequences(Iterable<String> sequences) {
     return embedSequences(Iterables.toArray(sequences));
@@ -73,7 +71,6 @@ public class Bert implements AutoCloseable {
    *
    * @param sequences the sequences to embed
    * @return the pooled embeddings for the sequences, in the order the input {@link java.util.Iterator} provided them
-   * @since 1.0.3
    */
   public float[][] embedSequences(Iterator<String> sequences) {
     return embedSequences(Iterables.toArray(sequences));
@@ -85,7 +82,6 @@ public class Bert implements AutoCloseable {
    *
    * @param sequences the sequences to embed
    * @return the pooled embeddings for the sequences, in the order they were provided
-   * @since 1.0.3
    */
   public float[][] embedSequences(String ... sequences) {
     try (var inputs = getInputs(sequences)) {
@@ -107,7 +103,6 @@ public class Bert implements AutoCloseable {
    *
    * @param sequences the sequences to embed
    * @return the token embeddings for the sequences, in the order the input {@link java.lang.Iterable} provided them
-   * @since 1.0.3
    */
   public float[][][] embedTokens(Iterable<String> sequences) {
     return embedTokens(Iterables.toArray(sequences));
@@ -119,7 +114,6 @@ public class Bert implements AutoCloseable {
    *
    * @param sequences the sequences to embed
    * @return the token embeddings for the sequences, in the order the input {@link java.util.Iterator} provided them
-   * @since 1.0.3
    */
   public float[][][] embedTokens(Iterator<String> sequences) {
     return embedTokens(Iterables.toArray(sequences));
@@ -131,7 +125,6 @@ public class Bert implements AutoCloseable {
    *
    * @param sequences the sequences to embed
    * @return the token embeddings for the sequences, in the order they were provided
-   * @since 1.0.3
    */
   public float[][][] embedTokens(String ... sequences) {
     try (var inputs = getInputs(sequences)) {
