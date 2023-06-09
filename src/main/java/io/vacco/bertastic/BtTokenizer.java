@@ -9,7 +9,7 @@ import java.util.stream.Stream;
  *
  * @author Rob Rua (https://github.com/robrua)
  */
-public abstract class Tokenizer {
+public abstract class BtTokenizer {
   /**
    * Splits a sequence into tokens based on whitespace
    *
@@ -27,7 +27,7 @@ public abstract class Tokenizer {
    * @return the tokens in the sequences, in the order the {@link java.lang.Iterable} provided them
    */
   public String[][] tokenize(Iterable<String> sequences) {
-    return tokenize(Iterables.toArray(sequences));
+    return tokenize(BtIterables.toArray(sequences, String.class));
   }
 
   /**
@@ -37,7 +37,7 @@ public abstract class Tokenizer {
    * @return the tokens in the sequences, in the order the {@link java.util.Iterator} provided them
    */
   public String[][] tokenize(final Iterator<String> sequences) {
-    return tokenize(Iterables.toArray(sequences));
+    return tokenize(BtIterables.toArray(sequences, String.class));
   }
 
   /**

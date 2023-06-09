@@ -1,10 +1,11 @@
 package io.vacco.bertastic;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Iterables {
+public class BtIterables {
 
   public static <T> List<T> from(Iterable<T> it) {
     var out = new ArrayList<T>();
@@ -19,16 +20,16 @@ public class Iterables {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> T[] toArray(Iterable<T> it) {
+  public static <T> T[] toArray(Iterable<T> it, Class<T> type) {
     var lst = from(it);
-    var out = (T[]) new Object[lst.size()];
+    var out = (T[]) Array.newInstance(type, lst.size());
     return lst.toArray(out);
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> T[] toArray(Iterator<T> it) {
+  public static <T> T[] toArray(Iterator<T> it, Class<T> type) {
     var lst = from(it);
-    var out = (T[]) new Object[lst.size()];
+    var out = (T[]) Array.newInstance(type, lst.size());
     return lst.toArray(out);
   }
 

@@ -13,14 +13,15 @@ import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.List;
 
-public class Bert implements AutoCloseable {
+public class BtSession implements AutoCloseable {
 
-  protected final ModelDetails model;
+  protected final BtModelDetails model;
 
+  private final BtModelSource modelSource;
   private final SavedModelBundle bundle;
   private final int separatorTokenId;
   private final int startTokenId;
-  private final FullTokenizer tokenizer;
+  private final BtFull tokenizer;
 
   private static final String SEPARATOR_TOKEN = "[SEP]";
   private static final String START_TOKEN = "[CLS]";
@@ -30,28 +31,24 @@ public class Bert implements AutoCloseable {
    *
    * @return a ready-to-use BERT model
    */
-  public static Bert load(ModelBundle mb, JsonInput ji) {
+  public static BtSession load(BtModelSource ms, BtJsonInput ji) {
     try {
-      var model = (ModelDetails) ji.fromJson(new FileReader(mb.modelDetails), ModelDetails.class);
-      var bundle = SavedModelBundle.load(mb.bundleDir.getAbsolutePath(), "serve");
-      return new Bert(bundle, model, mb.vocabFile);
+      var model = (BtModelDetails) ji.fromJson(new FileReader(ms.modelDetails), BtModelDetails.class);
+      var bundle = SavedModelBundle.load(ms.bundleDir.getAbsolutePath(), "serve");
+      return new BtSession(ms, bundle, model, ms.vocabFile);
     } catch (IOException e) {
       throw new RuntimeException("Unable to load BERT model", e);
     }
   }
 
-  private Bert(SavedModelBundle bundle, ModelDetails model, File vocabulary) {
-    tokenizer = new FullTokenizer(vocabulary, model.doLowerCase);
+  private BtSession(BtModelSource modelSource, SavedModelBundle bundle, BtModelDetails model, File vocabulary) {
+    tokenizer = new BtFull(vocabulary, model.doLowerCase);
+    this.modelSource = modelSource;
     this.bundle = bundle;
     this.model = model;
     int[] ids = tokenizer.convert(new String[]{START_TOKEN, SEPARATOR_TOKEN});
     startTokenId = ids[0];
     separatorTokenId = ids[1];
-  }
-
-  @Override
-  public void close() {
-    bundle.close();
   }
 
   /**
@@ -62,7 +59,7 @@ public class Bert implements AutoCloseable {
    * @return the pooled embeddings for the sequences, in the order the input {@link java.lang.Iterable} provided them
    */
   public float[][] embedSequences(Iterable<String> sequences) {
-    return embedSequences(Iterables.toArray(sequences));
+    return embedSequences(BtIterables.toArray(sequences, String.class));
   }
 
   /**
@@ -73,7 +70,7 @@ public class Bert implements AutoCloseable {
    * @return the pooled embeddings for the sequences, in the order the input {@link java.util.Iterator} provided them
    */
   public float[][] embedSequences(Iterator<String> sequences) {
-    return embedSequences(Iterables.toArray(sequences));
+    return embedSequences(BtIterables.toArray(sequences, String.class));
   }
 
   /**
@@ -97,6 +94,10 @@ public class Bert implements AutoCloseable {
     }
   }
 
+  public float[] embedSequence(String sequence) {
+    return embedSequences(sequence)[0];
+  }
+
   /**
    * Gets BERT embeddings for each of the tokens in multiple sequences. Sequences are usually individual sentences, but don't have to be.
    * The sequences will be processed in parallel as a single batch input to the TensorFlow model.
@@ -105,7 +106,7 @@ public class Bert implements AutoCloseable {
    * @return the token embeddings for the sequences, in the order the input {@link java.lang.Iterable} provided them
    */
   public float[][][] embedTokens(Iterable<String> sequences) {
-    return embedTokens(Iterables.toArray(sequences));
+    return embedTokens(BtIterables.toArray(sequences, String.class));
   }
 
   /**
@@ -116,7 +117,7 @@ public class Bert implements AutoCloseable {
    * @return the token embeddings for the sequences, in the order the input {@link java.util.Iterator} provided them
    */
   public float[][][] embedTokens(Iterator<String> sequences) {
-    return embedTokens(Iterables.toArray(sequences));
+    return embedTokens(BtIterables.toArray(sequences, String.class));
   }
 
   /**
@@ -140,7 +141,7 @@ public class Bert implements AutoCloseable {
     }
   }
 
-  private Inputs getInputs(String[] sequences) {
+  private BtInputs getInputs(String[] sequences) {
     var tokens = tokenizer.tokenize(sequences);
     var inputIds = IntBuffer.allocate(sequences.length * model.maxSequenceLength);
     var inputMask = IntBuffer.allocate(sequences.length * model.maxSequenceLength);
@@ -153,6 +154,7 @@ public class Bert implements AutoCloseable {
      * segmentIds are meant to distinguish paired sequences during training tasks. Here they're always 0 since we're only doing inference.
      */
     int instance = 1;
+
     for (var token : tokens) {
       int[] ids = tokenizer.convert(token);
       inputIds.put(startTokenId);
@@ -179,9 +181,16 @@ public class Bert implements AutoCloseable {
     inputMask.rewind();
     segmentIds.rewind();
 
-    return new Inputs(
+    return new BtInputs(
         DataBuffers.of(inputIds), DataBuffers.of(inputMask),
         DataBuffers.of(segmentIds), sequences.length, model.maxSequenceLength
     );
   }
+
+  @Override
+  public void close() {
+    bundle.close();
+    BtFileIO.delete(modelSource.bundleDir);
+  }
+
 }

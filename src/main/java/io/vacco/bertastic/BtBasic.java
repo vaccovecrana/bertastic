@@ -9,12 +9,12 @@ import java.util.stream.Stream;
  * A port of the BERT BasicTokenizer in the <a href="https://github.com/google-research/bert">BERT GitHub Repository</a>.
  * <p>
  * The BasicTokenizer is used to segment input sequences into linguistic tokens, which in most cases are words. These tokens can be fed to the
- * {@link WordpieceTokenizer} to further segment them into the BERT tokens that are used for input into the model.
+ * {@link BtWordPiece} to further segment them into the BERT tokens that are used for input into the model.
  *
  * @author Rob Rua (https://github.com/robrua)
  * @see <a href="https://github.com/google-research/bert/blob/master/tokenization.py">The Python tokenization code this is ported from</a>
  */
-public class BasicTokenizer extends Tokenizer {
+public class BtBasic extends BtTokenizer {
 
   private final boolean doLowerCase;
 
@@ -113,12 +113,12 @@ public class BasicTokenizer extends Tokenizer {
   }
 
   /**
-   * Creates a BERT {@link BasicTokenizer}
+   * Creates a BERT {@link BtBasic}
    *
    * @param doLowerCase whether to convert sequences to lower case during tokenization
    * 
    */
-  public BasicTokenizer(final boolean doLowerCase) {
+  public BtBasic(final boolean doLowerCase) {
     this.doLowerCase = doLowerCase;
   }
 
@@ -132,12 +132,12 @@ public class BasicTokenizer extends Tokenizer {
   @Override
   public String[][] tokenize(final String ... sequences) {
     return Arrays.stream(sequences)
-        .map(BasicTokenizer::cleanText)
-        .map(BasicTokenizer::tokenizeChineseCharacters)
+        .map(BtBasic::cleanText)
+        .map(BtBasic::tokenizeChineseCharacters)
         .map((final String sequence) -> whitespaceTokenize(sequence).toArray(String[]::new))
         .map((final String[] tokens) -> Arrays.stream(tokens)
             .map(this::stripAndSplit)
-            .flatMap(BasicTokenizer::whitespaceTokenize)
+            .flatMap(BtBasic::whitespaceTokenize)
             .toArray(String[]::new))
         .toArray(String[][]::new);
   }
@@ -146,7 +146,7 @@ public class BasicTokenizer extends Tokenizer {
   public String[] tokenize(final String sequence) {
     return whitespaceTokenize(tokenizeChineseCharacters(cleanText(sequence)))
         .map(this::stripAndSplit)
-        .flatMap(BasicTokenizer::whitespaceTokenize)
+        .flatMap(BtBasic::whitespaceTokenize)
         .toArray(String[]::new);
   }
 }

@@ -7,13 +7,13 @@ import java.util.stream.Stream;
 /**
  * A port of the BERT WordpieceTokenizer in the <a href="https://github.com/google-research/bert">BERT GitHub Repository</a>.
  * <p>
- * The WordpieceTokenizer processes tokens from the {@link BasicTokenizer} into sub-tokens - parts of words that compose BERT's vocabulary.
+ * The WordpieceTokenizer processes tokens from the {@link BtBasic} into sub-tokens - parts of words that compose BERT's vocabulary.
  * These tokens can then be converted into the inputIds that the BERT model accepts.
  *
  * @author Rob Rua (https://github.com/robrua)
  * @see <a href="https://github.com/google-research/bert/blob/master/tokenization.py">The Python tokenization code this is ported from</a>
  */
-public class WordpieceTokenizer extends Tokenizer {
+public class BtWordPiece extends BtTokenizer {
   private static final int DEFAULT_MAX_CHARACTERS_PER_WORD = 200;
   private static final String DEFAULT_UNKNOWN_TOKEN = "[UNK]";
 
@@ -22,24 +22,24 @@ public class WordpieceTokenizer extends Tokenizer {
   private final Map<String, Integer> vocabulary;
 
   /**
-   * Creates a BERT {@link WordpieceTokenizer}
+   * Creates a BERT {@link BtWordPiece}
    *
    * @param vocabulary a mapping from sub-tokens in the BERT vocabulary to their inputIds
    */
-  public WordpieceTokenizer(Map<String, Integer> vocabulary) {
+  public BtWordPiece(Map<String, Integer> vocabulary) {
     this.vocabulary = vocabulary;
     unknownToken = DEFAULT_UNKNOWN_TOKEN;
     maxCharactersPerWord = DEFAULT_MAX_CHARACTERS_PER_WORD;
   }
 
   /**
-   * Creates a BERT {@link WordpieceTokenizer}
+   * Creates a BERT {@link BtWordPiece}
    *
    * @param vocabulary            a mapping from sub-tokens in the BERT vocabulary to their inputIds
    * @param unknownToken          the sub-token to use when an unrecognized or too-long token is encountered
    * @param maxCharactersPerToken the maximum number of characters allowed in a token to be sub-tokenized
    */
-  public WordpieceTokenizer(Map<String, Integer> vocabulary, String unknownToken, int maxCharactersPerToken) {
+  public BtWordPiece(Map<String, Integer> vocabulary, String unknownToken, int maxCharactersPerToken) {
     this.vocabulary = vocabulary;
     this.unknownToken = unknownToken;
     maxCharactersPerWord = maxCharactersPerToken;

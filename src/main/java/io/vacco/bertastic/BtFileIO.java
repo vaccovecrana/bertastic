@@ -5,7 +5,7 @@ import java.net.URL;
 import java.nio.file.*;
 import java.util.zip.*;
 
-public class FileIO {
+public class BtFileIO {
 
   public static void unzip(URL zipUrl, File outDir) throws IOException {
     try (var inputStream = zipUrl.openStream();
@@ -33,9 +33,25 @@ public class FileIO {
 
   public static File newTempDir() {
     try {
-      return Files.createTempDirectory("easy-bert-").toFile();
+      var tmp = Files.createTempDirectory("bertastic-").toFile();
+      tmp.deleteOnExit();
+      return tmp;
     } catch (Exception e) {
       throw new IllegalStateException("Unable to create temp directory", e);
+    }
+  }
+
+  public static void delete(File dir) {
+    if (dir.isDirectory()) {
+      var files = dir.listFiles();
+      if (files != null) {
+        for (var file : files) {
+          delete(file);
+        }
+      }
+    }
+    if (!dir.delete()) {
+      throw new IllegalStateException("Failed to delete: " + dir);
     }
   }
 

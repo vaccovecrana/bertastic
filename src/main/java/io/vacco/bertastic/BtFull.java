@@ -2,9 +2,7 @@ package io.vacco.bertastic;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -12,19 +10,17 @@ import java.util.stream.Stream;
  * <p>
  * It's used to segment input sequences into the BERT tokens that exist in the model's vocabulary. These tokens are later converted into inputIds for the model.
  * <p>
- * It basically just feeds sequences to the {@link BasicTokenizer} then passes those results to the
- * {@link WordpieceTokenizer}
+ * It basically just feeds sequences to the {@link BtBasic} then passes those results to the
+ * {@link BtWordPiece}
  *
  * @author Rob Rua (https://github.com/robrua)
  * @see <a href="https://github.com/google-research/bert/blob/master/tokenization.py">The Python tokenization code this is ported from</a>
  */
-public class FullTokenizer extends Tokenizer {
-
-  private static final boolean DEFAULT_DO_LOWER_CASE = false;
+public class BtFull extends BtTokenizer {
 
   private final Map<String, Integer> vocabulary;
-  private final BasicTokenizer basic;
-  private final WordpieceTokenizer wordpiece;
+  private final BtBasic basic;
+  private final BtWordPiece wordpiece;
 
   private static Map<String, Integer> loadVocabulary(File in) {
     var vocabulary = new HashMap<String, Integer>();
@@ -41,24 +37,15 @@ public class FullTokenizer extends Tokenizer {
   }
 
   /**
-   * Creates a BERT {@link FullTokenizer}
-   *
-   * @param vocabulary BERT vocabulary file to use for tokenization
-   */
-  public FullTokenizer(File vocabulary) {
-    this(vocabulary, DEFAULT_DO_LOWER_CASE);
-  }
-
-  /**
-   * Creates a BERT {@link FullTokenizer}
+   * Creates a BERT {@link BtFull}
    *
    * @param vocabulary BERT vocabulary file to use for tokenization
    * @param doLowerCase whether to convert sequences to lower case during tokenization
    */
-  public FullTokenizer(File vocabulary, boolean doLowerCase) {
+  public BtFull(File vocabulary, boolean doLowerCase) {
     this.vocabulary = loadVocabulary(vocabulary);
-    basic = new BasicTokenizer(doLowerCase);
-    wordpiece = new WordpieceTokenizer(this.vocabulary);
+    basic = new BtBasic(doLowerCase);
+    wordpiece = new BtWordPiece(this.vocabulary);
   }
 
   /**
@@ -87,4 +74,5 @@ public class FullTokenizer extends Tokenizer {
         )
         .toArray(String[][]::new);
   }
+
 }
