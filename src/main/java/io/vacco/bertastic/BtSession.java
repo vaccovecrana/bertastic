@@ -1,5 +1,6 @@
 package io.vacco.bertastic;
 
+import org.tensorflow.Result;
 import org.tensorflow.SavedModelBundle;
 import org.tensorflow.Tensor;
 import org.tensorflow.ndarray.StdArrays;
@@ -83,12 +84,12 @@ public class BtSession implements AutoCloseable {
    */
   public float[][] embedSequences(String ... sequences) {
     try (var inputs = getInputs(sequences)) {
-      List<Tensor> output = bundle.session().runner()
-          .feed(model.inputIds, inputs.inputIds)
-          .feed(model.inputMask, inputs.inputMask)
-          .feed(model.segmentIds, inputs.segmentIds)
-          .fetch(model.pooledOutput)
-          .run();
+      Result output = bundle.session().runner()
+                            .feed(model.inputIds, inputs.inputIds)
+                            .feed(model.inputMask, inputs.inputMask)
+                            .feed(model.segmentIds, inputs.segmentIds)
+                            .fetch(model.pooledOutput)
+                            .run();
       try (var embedding = output.get(0)) {
         return StdArrays.array2dCopyOf((TFloat32) embedding);
       }
